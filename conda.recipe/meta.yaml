@@ -1,0 +1,27 @@
+package:
+  name: gefolki
+  version: 1.0.0
+
+source:
+  path: ..
+  
+build:
+  number: 0
+
+requirements:
+  host:
+    - python
+    - setuptools
+
+  run:
+    - python
+    - numpy
+    - scipy
+    - pillow
+    - scikit-image
+    - rasterio  
+
+about:
+  home: https://github.com/Terradue/gefolki
+  license: "GPL License"
+  summary: "GeFolki is a coregistration software for SAR/SAR and for other cases of remote sensing image coregistration (ex LIDAR/SAR, optics/SAR, hyperspectral/optics)"
