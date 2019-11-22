@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 consoleScript1 = 'gefolki-mining = gefolki.mining:main'
 
 setup(name="gefolki",
-      version="1.0.0",
+      version="1.0.1",
       description="GeFolki is a coregistration software for SAR/SAR and for other cases of remote sensing image coregistration (ex LIDAR/SAR, optics/SAR, hyperspectral/optics)",
       url="https://github.com/Terradue/gefolki",
       author="Aurelien Plyer, Elise Colin-Koeniguer, Flora Weissgerber et al",
