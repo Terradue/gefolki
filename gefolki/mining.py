@@ -1,6 +1,7 @@
 """
 Date : 01/10/2018
 """
+from __future__ import absolute_import
 import numpy as np
 import argparse
 #from algorithm import EFolki
@@ -8,7 +9,7 @@ from skimage.io import imread
 import pylab as pl
 from skimage.transform import resize
 #from rank import rank_sup as rank_filter_sup
-from rank import rank_inf as rank_filter_inf
+from .rank import rank_inf as rank_filter_inf
 import rasterio
 
 def mining(file_path_master=None, file_path_slave=None, rank=3, fdecimation=8):

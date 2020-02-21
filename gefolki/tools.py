@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import numpy as np
-from primitive import interp2
+from .primitive import interp2
 
 
 def wrapData(I, u, v):

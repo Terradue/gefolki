@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+from __future__ import absolute_import
 import numpy as np
 
 from scipy.io import loadmat
@@ -7,8 +7,8 @@ from scipy.ndimage import imread
 
 import pylab as pl
 
-from algorithm import GEFolki, EFolki, Folki
-from tools import wrapData
+from .algorithm import GEFolki, EFolki, Folki
+from .tools import wrapData
 
 from PIL import Image
 

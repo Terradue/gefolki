@@ -1,6 +1,6 @@
-
+from __future__ import absolute_import
 import numpy as np
-from primitive import *
+from .primitive import *
 from PIL import Image
 
 class BurtOF:

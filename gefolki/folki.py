@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 import numpy as np
-from rank import rank_inf as rank_filter_inf
-from rank import rank_sup as rank_filter_sup
+from .rank import rank_inf as rank_filter_inf
+from .rank import rank_sup as rank_filter_sup
 from PIL import Image
-from primitive import *
-from adapthist import *
+from .primitive import *
+from .adapthist import *
 import scipy
 
 
