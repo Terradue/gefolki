@@ -24,6 +24,7 @@ dependencies = [
   "scikit-image",
   "scipy",
   "click",
+  "imagecodecs",
   "loguru",
 ]
 
@@ -53,7 +54,6 @@ include = [
 
 [tool.hatch.envs.test]
 path = "envs/gefolki_test_env"
-python = "/usr/bin/python3"
 dependencies = [
   "nose2",
   "matplotlib",
@@ -61,8 +61,9 @@ dependencies = [
   "pillow",
   "rasterio",
   "scikit-image",
+  "imagecodecs",
   "scipy",
 ]
 
 [tool.hatch.envs.test.scripts]
-test = "nose2 tests/"
+test = "nose2"
