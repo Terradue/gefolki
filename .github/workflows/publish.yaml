@@ -1,0 +1,40 @@
+name: publish
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+          cache: pip
+
+      - name: Install Hatch and Twine
+        run: python -m pip install --upgrade pip hatch twine
+
+      - name: Build package
+        run: hatch build
+
+      - name: Verify package metadata
+        run: python -m twine check dist/*
+
+      - name: Run tests
+        run: hatch run test:test
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
