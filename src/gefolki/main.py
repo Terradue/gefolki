@@ -6,7 +6,7 @@ from scipy.io import loadmat
 from skimage.io import imread
 
 import pylab as pl
-
+from loguru import logger
 from .algorithm import GEFolki, EFolki, Folki
 from .tools import wrapData
 
@@ -14,7 +14,7 @@ from PIL import Image
 
 
 def demo():
-    print("Debut recalage Lidar/Radar\n")
+    logger.info("Debut recalage Lidar/Radar\n")
     radar = imread("./datasets/radar_bandep.png")
     Ilidari = imread("./datasets/lidar_georef.png")
 
@@ -59,9 +59,9 @@ def demo():
     ### Added by Terradue
     pl.show()
 
-    print("Fin recalage Lidar/Radar \n\n")
+    logger.info("Fin recalage Lidar/Radar \n\n")
 
-    print("Debut recalage optique/Radar\n")
+    logger.info("Debut recalage optique/Radar\n")
     radar = imread("./datasets/radar_bandep.png")
     Ioptique = imread("./datasets/optiquehr_georef.png")
 
@@ -107,13 +107,4 @@ def demo():
     pl.title("Imfuse of RADAR and OPTIC after coregistration")
     ### Added by Terradue
     pl.show()
-    print("Fin recalage optique/Radar \n\n")
-
-
-### Removed by Terradue
-# if __name__ == '__main__':
-#    demo()
-#    pl.show()
-# else:
-#    pl.interactive(True)
-#    demo()
+    logger.info("Fin recalage optique/Radar \n\n")
