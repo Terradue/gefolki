@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gefolki"
+dynamic = ["version"]
+description = "GeFolki is a coregistration software for SAR/SAR and for other cases of remote sensing image coregistration (ex LIDAR/SAR, optics/SAR, hyperspectral/optics)"
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+authors = [
+  { name = "Fabrice Brito", email = "fabrice.brito@terradue.com" },
+  { name = "pmembari", email = "parham.membari@terradue.com" },
+  { name = "Aurelien Plyer" },
+  { name = "Elise Colin-Koeniguer" },
+  { name = "Flora Weissgerber et al" },
+] 
+dependencies = [
+  "matplotlib",
+  "numpy",
+  "pillow",
+  "rasterio",
+  "scikit-image",
+  "scipy",
+  "click",
+  "loguru",
+]
+
+[tool.hatch.version]
+path = "src/gefolki/__about__.py"
+
+
+[project.urls]
+Homepage = "https://github.com/Terradue/gefolki"
+Repository = "https://github.com/Terradue/gefolki"
+
+[project.scripts]
+gefolki-mining = "gefolki.mining:mining"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gefolki"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/README.md",
+  "/LICENSE.txt",
+]
+
+[tool.hatch.envs.test]
+path = "envs/gefolki_test_env"
+python = "/usr/bin/python3"
+dependencies = [
+  "nose2",
+  "matplotlib",
+  "numpy",
+  "pillow",
+  "rasterio",
+  "scikit-image",
+  "scipy",
+]
+
+[tool.hatch.envs.test.scripts]
+test = "nose2 tests/"
