@@ -1,0 +1,32 @@
+site_name: GeFolki
+site_description: Documentation for the GeFolki remote-sensing coregistration library
+repo_url: https://github.com/Terradue/gefolki
+docs_dir: docs
+
+nav:
+  - Home: index.md
+  - Tutorials:
+      - Overview: tutorials/index.md
+      - First Steps with the Example Notebooks: tutorials/first-steps.md
+  - How-to Guides:
+      - Overview: how-to/index.md
+      - Run the Mining Workflow from Python: how-to/run-mining-from-python.md
+      - Run the Built-in Demo from a Notebook: how-to/run-demo-from-notebook.md
+  - Reference:
+      - Overview: reference/index.md
+      - Python API: reference/python-api.md
+      - CLI Interface: reference/cli.md
+  - Explanation:
+      - Overview: explanation/index.md
+      - Workflow and Processing Stages: explanation/workflow-and-stages.md
+      - Parameter Selection: explanation/parameter-selection.md
+      - Positioning, Validation, and Practical Material: explanation/positioning-and-validation.md
+
+theme:
+  name: readthedocs
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true

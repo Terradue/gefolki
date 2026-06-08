@@ -3,11 +3,11 @@ import numpy as np
 from .primitive import interp2
 
 
-def wrapData(I, u, v):
+def wrapData(image, u, v):
     """
-    Apply the [u,v] optical flow to the data I
+    Apply the [u,v] optical flow to the input image.
     """
-    col, row = I.shape[1], I.shape[0]
-    X, Y = np.meshgrid(range(col), range(row))
-    R = interp2(I, X + u, Y + v)
-    return R
+    col, row = image.shape[1], image.shape[0]
+    x_coords, y_coords = np.meshgrid(range(col), range(row))
+    result = interp2(image, x_coords + u, y_coords + v)
+    return result

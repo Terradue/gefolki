@@ -6,3 +6,7 @@
 build
 dist
 *.egg-info
+.agents
+.vscode
+.task
+envs/*

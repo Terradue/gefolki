@@ -7,8 +7,8 @@ name = "gefolki"
 dynamic = ["version"]
 description = "GeFolki is a coregistration software for SAR/SAR and for other cases of remote sensing image coregistration (ex LIDAR/SAR, optics/SAR, hyperspectral/optics)"
 readme = "README.md"
-requires-python = ">=3.8"
-license = "MIT"
+requires-python = ">=3.10"
+license = "GPL-3.0"
 authors = [
   { name = "Fabrice Brito", email = "fabrice.brito@terradue.com" },
   { name = "pmembari", email = "parham.membari@terradue.com" },
@@ -37,7 +37,7 @@ Homepage = "https://github.com/Terradue/gefolki"
 Repository = "https://github.com/Terradue/gefolki"
 
 [project.scripts]
-gefolki-mining = "gefolki.mining:mining"
+gefolki-mining = "gefolki.cli:mining_cli"
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -67,3 +67,27 @@ dependencies = [
 
 [tool.hatch.envs.test.scripts]
 test = "nose2"
+
+
+[tool.hatch.envs.dev]
+description = "Development environment"
+skip-install = true
+dependencies = [
+  "ruff",
+]
+
+[tool.hatch.envs.dev.scripts]
+lint = "ruff format src tests"
+check = "ruff check --fix src tests"
+
+[tool.hatch.envs.docs]
+description = "Documentation generation environment"
+dependencies = [
+  "mkdocs>=1.6.0",
+  "mkdocs-material>=9.5.0",
+  "mkdocstrings[python]>=0.28.0",
+]
+
+[tool.hatch.envs.docs.scripts]
+serve = "mkdocs serve {args}"
+build = "mkdocs build {args}"

@@ -3,12 +3,10 @@ Date : 01/10/2018
 """
 
 from __future__ import absolute_import
-import click
 import numpy as np
 
 # from algorithm import EFolki
 from skimage.io import imread
-import pylab as pl
 from skimage.transform import resize
 
 # from rank import rank_sup as rank_filter_sup
@@ -17,84 +15,69 @@ import rasterio
 from loguru import logger
 
 
-@click.command(
-    short_help="Search for a smaller slave inside a larger master image",
-    help="This workflow searches for a smaller slave image inside a larger master image using a coarse-to-fine rank-based matching procedure.",
-    context_settings=dict(
-        ignore_unknown_options=True,
-        allow_extra_args=True,
-    ),
-)
-@click.option(
-    "--input_master",
-    "file_path_master",
-    help="Single band asset to be used in the RGB combination for the RED channel",
-    required=True,
-    type=click.Path(),
-)
-@click.option(
-    "--input_slave",
-    "file_path_slave",
-    help="Single band asset to be used in the RGB combination for the GREEN channel",
-    required=True,
-    type=click.Path(),
-)
-@click.option(
-    "--rank",
-    "rank",
-    help="Rank for the rank-based matching procedure",
-    required=False,
-    type=int,
-    default=3,
-)
-@click.option(
-    "--fdecimation",
-    "fdecimation",
-    help="Decimation Factor",
-    required=False,
-    type=int,
-    default=8,
-)
-def mining(file_path_master, file_path_slave, rank, fdecimation):
+def _get_plot_module():
+    import matplotlib.pyplot as pl
+
+    return pl
+
+
+def mining(
+    file_path_reference=None,
+    file_path_secondary=None,
+    rank=3,
+    fdecimation=8,
+    **deprecated_kwargs,
+):
     """Load a raster."""
+    if "file_path_master" in deprecated_kwargs and file_path_reference is None:
+        file_path_reference = deprecated_kwargs.pop("file_path_master")
+    if "file_path_slave" in deprecated_kwargs and file_path_secondary is None:
+        file_path_secondary = deprecated_kwargs.pop("file_path_slave")
+    if deprecated_kwargs:
+        unexpected = ", ".join(sorted(deprecated_kwargs))
+        raise TypeError(f"Unexpected keyword arguments: {unexpected}")
+
+    pl = _get_plot_module()
     logger.info("Mining Execution Started")
-    src = rasterio.open(file_path_master)
-    M = src.read()
-    Master = M[0, :, :]
+    src = rasterio.open(file_path_reference)
+    raster_data = src.read()
+    reference_image = raster_data[0, :, :]
 
     pl.figure()
-    pl.imshow(Master)
-    pl.title("Master")
+    pl.imshow(reference_image)
+    pl.title("Reference")
 
-    S = imread(file_path_slave)
+    secondary_data = imread(file_path_secondary)
     pl.figure()
-    pl.imshow(S)
-    pl.title("Slave: Image to find within the Master")
+    pl.imshow(secondary_data)
+    pl.title("Secondary: Image to find within the Reference")
 
-    Slave = S[:, :, 0]
-    dimx, dimy = np.shape(Master)
-    dimxn, dimyn = np.shape(Slave)
+    secondary_image = secondary_data[:, :, 0]
+    dimx, dimy = np.shape(reference_image)
+    dimxn, dimyn = np.shape(secondary_image)
 
     # Decimation
 
     nx = int(round(dimx / fdecimation))
     ny = int(round(dimy / fdecimation))
-    Mg = resize(Master, (nx, ny), 1, "constant")
+    reference_downsampled = resize(reference_image, (nx, ny), 1, "constant")
     nsx = int(round(dimxn / fdecimation))
     nsy = int(round(dimyn / fdecimation))
-    Sg = resize(Slave, (nsx, nsy), 1, "constant")
+    secondary_downsampled = resize(secondary_image, (nsx, nsy), 1, "constant")
 
     # Rank computation and Criterion on images after deximation
-    Mg_rank = rank_filter_inf(Mg, rank)  # rank sup : high value pixels have low rank
-    Sg_rank = rank_filter_inf(Sg, rank)
+    reference_rank = rank_filter_inf(
+        reference_downsampled, rank
+    )  # rank sup : high value pixels have low rank
+    secondary_rank = rank_filter_inf(secondary_downsampled, rank)
 
     R = np.zeros((nx - nsx - 1, ny - nsy - 1))
-    indices = np.nonzero(Sg_rank)
-    test2 = Sg_rank[indices]
+    indices = np.nonzero(secondary_rank)
+    test2 = secondary_rank[indices]
 
     for k in range(0, nx - nsx - 1):
         for p in range(0, ny - nsy - 1):
-            test1 = Mg_rank[k : k + nsx, p : p + nsy]
+            test1 = reference_rank[k : k + nsx, p : p + nsy]
             test1 = test1[indices]
             test = (test1 - test2) ** 2
             R[k, p] = test.mean()
@@ -113,20 +96,20 @@ def mining(file_path_master, file_path_slave, rank, fdecimation):
     indy1max = min(dimy, indy + dimyn + 100)
 
     # Rank computation and Criterion on images without deximation after preinitialization
-    Master_crop = Master[indx1:indx1max, indy1:indy1max]
-    M_rank_crop = rank_filter_inf(
-        Master_crop, rank
+    reference_crop = reference_image[indx1:indx1max, indy1:indy1max]
+    reference_rank_crop = rank_filter_inf(
+        reference_crop, rank
     )  # rank sup : high value pixels have low rank
-    S_rank = rank_filter_inf(Slave, rank)
+    secondary_rank_full = rank_filter_inf(secondary_image, rank)
 
-    dimxcrop, dimycrop = np.shape(M_rank_crop)
+    dimxcrop, dimycrop = np.shape(reference_rank_crop)
     Rfin = np.zeros((dimxcrop - dimxn - 1, dimycrop - dimyn - 1))
-    indices = np.nonzero(S_rank)
-    test2 = S_rank[indices]
+    indices = np.nonzero(secondary_rank_full)
+    test2 = secondary_rank_full[indices]
 
     for k in range(0, dimxcrop - dimxn - 1):
         for p in range(0, dimycrop - dimyn - 1):
-            test1 = M_rank_crop[k : k + dimxn, p : p + dimyn]
+            test1 = reference_rank_crop[k : k + dimxn, p : p + dimyn]
             test1 = test1[indices]
             test = (test1 - test2) ** 2
             Rfin[k, p] = test.mean()
@@ -135,17 +118,17 @@ def mining(file_path_master, file_path_slave, rank, fdecimation):
     ind = np.unravel_index(np.argmin(Rfin, axis=None), Rfin.shape)
     indx2 = ind[0]
     indy2 = ind[1]
-    Master_final = Master_crop[indx2 : indx2 + dimxn, indy2 : indy2 + dimyn]
+    reference_final = reference_crop[indx2 : indx2 + dimxn, indy2 : indy2 + dimyn]
 
     pl.figure()
     pl.imshow(Rfin, vmin=np.min(Rfin[np.nonzero(Rfin)]), vmax=Rfin.max(), cmap="jet")
     pl.title("Fine Criterion without decimation after preinitialisation")
 
-    rgb = np.dstack((Slave, Master_final, Slave))
+    rgb = np.dstack((secondary_image, reference_final, secondary_image))
 
     pl.figure()
     pl.imshow(rgb)
-    pl.title("Superposition of Slave and Master Extraction")
+    pl.title("Superposition of Secondary and Reference Extraction")
 
     pl.show()
 
@@ -157,29 +140,7 @@ def mining(file_path_master, file_path_slave, rank, fdecimation):
         f"Final extraction coordinates: xmin={xmin}, xmax={xmax}, ymin={ymin}, ymax={ymax}"
     )
     logger.success("Done")
-    return xmin, xmax, ymin, ymax, Master_final
+    return xmin, xmax, ymin, ymax, reference_final
 
-
-# def main():
-#     """Main function."""
-#     # # create the parser for arguments
-#     # parser = argparse.ArgumentParser()
-#     # parser.add_argument("--input_master", type=str,  required=True,
-#     #                     help="Filepath of image Sentinel 1 Master")
-#     # parser.add_argument("--input_slave", type=str,  required=True,
-#     #                     help="Filepath of Slave image to find within Master")
-#     # parser.add_argument("--rank", type=int, default=3, help="Rank radius", required=False)
-#     # parser.add_argument("--fdecimation", type=int, default=8, help="Decimation Factor", required=False)
-#     # args = parser.parse_args()
-
-#     # file_path_master=args.input_master
-#     # file_path_slave=args.input_slave
-#     # rank=args.rank
-#     # fdecimation=args.fdecimation
-
-
-# ==============================================
-if __name__ == "__main__":
-    mining()
 
 # EOF

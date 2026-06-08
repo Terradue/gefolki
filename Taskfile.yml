@@ -1,0 +1,33 @@
+version: '3'
+
+tasks:
+
+   # code quality
+  code:check:
+    desc: Run code quality checks
+    cmds:
+      - mkdir -p .task/hatch
+      - |
+        set -euo pipefail
+        HATCH_DATA_DIR="$PWD/.task/hatch" hatch run dev:check
+
+  code:lint:
+    desc: Run linters
+    cmds:
+      - mkdir -p .task/hatch
+      - |
+        set -euo pipefail
+        HATCH_DATA_DIR="$PWD/.task/hatch" hatch run dev:lint
+
+  code:test:
+    desc: Run tests
+    cmds:
+      - mkdir -p .task/hatch
+      - HATCH_DATA_DIR="$PWD/.task/hatch" hatch run test:test 
+
+  docs:serve:
+    desc: "Serve MkDocs site using hatch docs environment"
+    cmds:
+      - |
+        set -euo pipefail
+        HATCH_DATA_DIR="$PWD/.task/hatch" hatch run docs:serve

@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 import numpy as np
-from .primitive import *
-from PIL import Image
+from .primitive import conv2bis
 
 
 class BurtOF:
@@ -19,7 +18,6 @@ class BurtOF:
         Py0 = [I0]
         Py1 = [I1]
 
-        compt = 1
         for i in range(self.levels, 0, -1):
             Py0.append(self.pyrUp(Py0[-1]))
             Py1.append(self.pyrUp(Py1[-1]))
@@ -37,35 +35,35 @@ class BurtOF:
                 v = 2 * self.pyrDown(v, (row, col))
         return u, v
 
-    def conv2SepMatlab(self, I, fen):
+    def conv2SepMatlab(self, image, fen):
 
         rad = int((fen.size - 1) / 2)
-        ligne = np.zeros((rad, I.shape[1]))
-        I = np.append(ligne, I, axis=0)
-        I = np.append(I, ligne, axis=0)
+        ligne = np.zeros((rad, image.shape[1]))
+        image = np.append(ligne, image, axis=0)
+        image = np.append(image, ligne, axis=0)
 
-        colonne = np.zeros((I.shape[0], rad))
-        I = np.append(colonne, I, axis=1)
-        I = np.append(I, colonne, axis=1)
+        colonne = np.zeros((image.shape[0], rad))
+        image = np.append(colonne, image, axis=1)
+        image = np.append(image, colonne, axis=1)
 
-        res = conv2bis(conv2bis(I, fen.T), fen)
+        res = conv2bis(conv2bis(image, fen.T), fen)
         return res
 
-    def pyrUp(self, I):
+    def pyrUp(self, image):
         a = 0.4
         burt1D = np.array(
             [[1.0 / 4.0 - a / 2.0, 1.0 / 4.0, a, 1.0 / 4.0, 1.0 / 4.0 - a / 2.0]]
         )
 
-        M = self.conv2SepMatlab(I, burt1D)
+        M = self.conv2SepMatlab(image, burt1D)
         self.toto = M
         return M[::2, ::2]
 
-    def pyrDown(self, I, shape):
+    def pyrDown(self, image, shape):
         res = np.zeros(shape)
-        I = np.repeat(np.repeat(I, 2, 0), 2, 1)
-        col, row = I.shape[1], I.shape[0]
+        image = np.repeat(np.repeat(image, 2, 0), 2, 1)
+        col, row = image.shape[1], image.shape[0]
         col = min(shape[1], col)
         row = min(shape[0], row)
-        res[:row, :col] = I[:row, :col]
+        res[:row, :col] = image[:row, :col]
         return res

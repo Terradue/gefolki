@@ -1,31 +1,32 @@
 from __future__ import absolute_import
 import numpy as np
+from .adapthist import equalize_adapthist
+from .primitive import conv2Sep
+from .primitive import conv2bis
+from .primitive import gradients
+from .primitive import interp2
 from .rank import rank_inf as rank_filter_inf
 from .rank import rank_sup as rank_filter_sup
-from PIL import Image
-from .primitive import *
-from .adapthist import *
-import scipy
 
 
-def conv2SepMatlabbis(I, fen):
-
+def conv2SepMatlabbis(image, fen):
     rad = int((fen.size - 1) / 2)
-    ligne = np.zeros((rad, I.shape[1]))
-    I = np.append(ligne, I, axis=0)
-    I = np.append(I, ligne, axis=0)
+    ligne = np.zeros((rad, image.shape[1]))
+    image = np.append(ligne, image, axis=0)
+    image = np.append(image, ligne, axis=0)
 
-    colonne = np.zeros((I.shape[0], rad))
-    I = np.append(colonne, I, axis=1)
-    I = np.append(I, colonne, axis=1)
+    colonne = np.zeros((image.shape[0], rad))
+    image = np.append(colonne, image, axis=1)
+    image = np.append(image, colonne, axis=1)
 
-    res = conv2bis(conv2bis(I, fen.T), fen)
+    res = conv2bis(conv2bis(image, fen.T), fen)
     return res
 
 
 def FolkiIter(I0, I1, iteration=5, radius=8, talon=1.0e-8, uinit=None, vinit=None):
+    def window_average(image):
+        return conv2Sep(image, np.ones([2 * radius + 1, 1])) / (2 * radius + 1)
 
-    W = lambda x: conv2Sep(x, np.ones([2 * radius + 1, 1])) / (2 * radius + 1)
     I0 = I0.astype(np.float32)
     I1 = I1.astype(np.float32)
     if uinit is None:
@@ -37,17 +38,17 @@ def FolkiIter(I0, I1, iteration=5, radius=8, talon=1.0e-8, uinit=None, vinit=Non
     else:
         v = vinit
     Ix, Iy = gradients(I0)
-    Ixx = W(Ix * Ix) + talon
-    Iyy = W(Iy * Iy) + talon
-    Ixy = W(Ix * Iy)
+    Ixx = window_average(Ix * Ix) + talon
+    Iyy = window_average(Iy * Iy) + talon
+    Ixy = window_average(Ix * Iy)
     D = Ixx * Iyy - Ixy**2
     cols, rows = I0.shape[1], I0.shape[0]
     x, y = np.meshgrid(range(cols), range(rows))
     for i in range(iteration):
         i1w = interp2(I1, x + u, y + v)
         it = I0 - i1w + u * Ix + v * Iy
-        Ixt = W(Ix * it)
-        Iyt = W(Iy * it)
+        Ixt = window_average(Ix * it)
+        Iyt = window_average(Iy * it)
         u = (Iyy * Ixt - Ixy * Iyt) / D
         v = (Ixx * Iyt - Ixy * Ixt) / D
         unvalid = np.isnan(u) | np.isinf(u) | np.isnan(v) | np.isinf(v)
@@ -77,21 +78,22 @@ def EFolkiIter(I0, I1, iteration=5, radius=[8, 4], rank=4, uinit=None, vinit=Non
     x, y = np.meshgrid(range(cols), range(rows))
 
     for rad in radius:
-
         burt1D = np.array(np.ones([1, 2 * rad + 1])) / (2 * rad + 1)
-        W = lambda x: conv2SepMatlabbis(x, burt1D)
 
-        Ixx = W(Ix * Ix) + talon
-        Iyy = W(Iy * Iy) + talon
-        Ixy = W(Ix * Iy)
+        def window_average(image):
+            return conv2SepMatlabbis(image, burt1D)
+
+        Ixx = window_average(Ix * Ix) + talon
+        Iyy = window_average(Iy * Iy) + talon
+        Ixy = window_average(Ix * Iy)
         D = Ixx * Iyy - Ixy**2
 
         for i in range(iteration):
             i1w = interp2(I1, x + u, y + v)
 
             it = I0 - i1w + u * Ix + v * Iy
-            Ixt = W(Ix * it)
-            Iyt = W(Iy * it)
+            Ixt = window_average(Ix * it)
+            Iyt = window_average(Iy * it)
             u = (Iyy * Ixt - Ixy * Iyt) / D
             v = (Ixx * Iyt - Ixy * Ixt) / D
             unvalid = np.isnan(u) | np.isinf(u) | np.isnan(v) | np.isinf(v)
@@ -172,17 +174,17 @@ def GEFolkiIter(I0, I1, iteration=5, radius=[8, 4], rank=4, uinit=None, vinit=No
     cols, rows = I0.shape[1], I0.shape[0]
     x, y = np.meshgrid(range(cols), range(rows))
     for rad in radius:
-
         burt1D = np.array(np.ones([1, 2 * rad + 1])) / (2 * rad + 1)
-        W = lambda xin: conv2SepMatlabbis(xin, burt1D)
 
-        Ixx = W(Ix * Ix)
-        Iyy = W(Iy * Iy)
-        Ixy = W(Ix * Iy)
+        def window_average(image):
+            return conv2SepMatlabbis(image, burt1D)
+
+        Ixx = window_average(Ix * Ix)
+        Iyy = window_average(Iy * Iy)
+        Ixy = window_average(Ix * Iy)
         D = Ixx * Iyy - Ixy**2
 
         for i in range(iteration):
-
             dx = x + u
             dy = y + v
             dx[dx < 0] = 0
@@ -200,8 +202,8 @@ def GEFolkiIter(I0, I1, iteration=5, radius=[8, 4], rank=4, uinit=None, vinit=No
 
             R1w[crit1 > crit2] = R1w_1[crit1 > crit2]
             it = R0 - R1w + u * Ix + v * Iy
-            Ixt = W(Ix * it)
-            Iyt = W(Iy * it)
+            Ixt = window_average(Ix * it)
+            Iyt = window_average(Iy * it)
             u = (Iyy * Ixt - Ixy * Iyt) / D
             v = (Ixx * Iyt - Ixy * Ixt) / D
             unvalid = np.isnan(u) | np.isinf(u) | np.isnan(v) | np.isinf(v)

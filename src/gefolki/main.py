@@ -2,18 +2,21 @@
 from __future__ import absolute_import
 import numpy as np
 
-from scipy.io import loadmat
 from skimage.io import imread
 
-import pylab as pl
 from loguru import logger
-from .algorithm import GEFolki, EFolki, Folki
+from .algorithm import GEFolki, EFolki
 from .tools import wrapData
 
-from PIL import Image
+
+def _get_plot_module():
+    import matplotlib.pyplot as pl
+
+    return pl
 
 
 def demo():
+    pl = _get_plot_module()
     logger.info("Debut recalage Lidar/Radar\n")
     radar = imread("./datasets/radar_bandep.png")
     Ilidari = imread("./datasets/lidar_georef.png")
