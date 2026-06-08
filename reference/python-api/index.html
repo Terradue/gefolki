@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Python API - GeFolki</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Python API";
+        var mkdocs_page_input_path = "reference/python-api.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> GeFolki
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/first-steps/">First Steps with the Example Notebooks</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How-to Guides</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/run-mining-from-python/">Run the Mining Workflow from Python</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to/run-demo-from-notebook/">Run the Built-in Demo from a Notebook</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Reference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../">Overview</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Python API</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#package-exports">Package Exports</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dense-registration-interfaces">Dense Registration Interfaces</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#gefolkifolki">gefolki.Folki</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#gefolkiefolki">gefolki.EFolki</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#gefolkigefolki">gefolki.GEFolki</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#warping-helper">Warping Helper</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#gefolkiwrapdataimage-u-v">gefolki.wrapData(image, u, v)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rank-filters">Rank Filters</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#gefolkirank_filter_infimage-rad">gefolki.rank_filter_inf(image, rad)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#gefolkirank_filter_supimage-rad">gefolki.rank_filter_sup(image, rad)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mining-workflow">Mining Workflow</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#gefolkiminingfile_path_referencenone-file_path_secondarynone-rank3-fdecimation8-deprecated_kwargs">gefolki.mining(file_path_reference=None, file_path_secondary=None, rank=3, fdecimation=8, **deprecated_kwargs)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#demo">Demo</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#gefolkidemo">gefolki.demo()</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../cli/">CLI Interface</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Explanation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/workflow-and-stages/">Workflow and Processing Stages</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/parameter-selection/">Parameter Selection</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../explanation/positioning-and-validation/">Positioning, Validation, and Practical Material</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">GeFolki</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Reference</li>
+      <li class="breadcrumb-item active">Python API</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Terradue/gefolki/edit/master/docs/reference/python-api.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="python-api">Python API<a class="headerlink" href="#python-api" title="Permanent link">&para;</a></h1>
+<p>This page documents the public Python interfaces exported by <code>gefolki</code>.</p>
+<h2 id="package-exports">Package Exports<a class="headerlink" href="#package-exports" title="Permanent link">&para;</a></h2>
+<p>The top-level package currently re-exports:</p>
+<ul>
+<li><code>gefolki.Folki</code></li>
+<li><code>gefolki.EFolki</code></li>
+<li><code>gefolki.GEFolki</code></li>
+<li><code>gefolki.wrapData</code></li>
+<li><code>gefolki.mining</code></li>
+<li><code>gefolki.rank_filter_inf</code></li>
+<li><code>gefolki.rank_filter_sup</code></li>
+<li><code>gefolki.demo</code></li>
+</ul>
+<h2 id="dense-registration-interfaces">Dense Registration Interfaces<a class="headerlink" href="#dense-registration-interfaces" title="Permanent link">&para;</a></h2>
+<h3 id="gefolkifolki"><code>gefolki.Folki</code><a class="headerlink" href="#gefolkifolki" title="Permanent link">&para;</a></h3>
+<p>Dense registration callable for homogeneous image pairs.</p>
+<p>Signature:</p>
+<pre><code class="language-python">u, v = gefolki.Folki(I0, I1, *, levels=4, iteration=5, radius=8, talon=1.0e-8, uinit=None, vinit=None)
+</code></pre>
+<p>Parameters:</p>
+<ul>
+<li><code>I0</code>
+  Reference image as a 2D NumPy array.</li>
+<li><code>I1</code>
+  Secondary image as a 2D NumPy array, already initialized to the reference geometry.</li>
+<li><code>levels</code>
+  Number of pyramid levels used by the multiscale wrapper.</li>
+<li><code>iteration</code>
+  Number of iterations at each scale.</li>
+<li><code>radius</code>
+  Window radius for local averaging.</li>
+<li><code>talon</code>
+  Small stabilization term added to structure-tensor terms.</li>
+<li><code>uinit</code>, <code>vinit</code>
+  Optional initial displacement fields.</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li><code>u</code>
+  Horizontal displacement field with the same shape as <code>I0</code>.</li>
+<li><code>v</code>
+  Vertical displacement field with the same shape as <code>I0</code>.</li>
+</ul>
+<h3 id="gefolkiefolki"><code>gefolki.EFolki</code><a class="headerlink" href="#gefolkiefolki" title="Permanent link">&para;</a></h3>
+<p>Dense registration callable with rank-based preprocessing for more difficult remote-sensing texture.</p>
+<p>Signature:</p>
+<pre><code class="language-python">u, v = gefolki.EFolki(I0, I1, *, levels=4, iteration=5, radius=[8, 4], rank=4, uinit=None, vinit=None)
+</code></pre>
+<p>Additional parameters:</p>
+<ul>
+<li><code>radius</code>
+  Sequence of window radii evaluated from coarse to fine inside each pyramid level.</li>
+<li><code>rank</code>
+  Rank-filter radius used before optical-flow estimation.</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li><code>u</code>
+  Horizontal displacement field.</li>
+<li><code>v</code>
+  Vertical displacement field.</li>
+</ul>
+<h3 id="gefolkigefolki"><code>gefolki.GEFolki</code><a class="headerlink" href="#gefolkigefolki" title="Permanent link">&para;</a></h3>
+<p>Dense registration callable for heterogeneous image pairs, with rank filtering and contrast adaptation.</p>
+<p>Signature:</p>
+<pre><code class="language-python">u, v = gefolki.GEFolki(I0, I1, *, levels=4, iteration=5, radius=[8, 4], rank=4, uinit=None, vinit=None)
+</code></pre>
+<p>Notes:</p>
+<ul>
+<li>Intended for heterogeneous modalities such as SAR/optical or SAR/LiDAR.</li>
+<li>Internally applies rank filtering and adaptive histogram equalization before displacement estimation.</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li><code>u</code>
+  Horizontal displacement field.</li>
+<li><code>v</code>
+  Vertical displacement field.</li>
+</ul>
+<h2 id="warping-helper">Warping Helper<a class="headerlink" href="#warping-helper" title="Permanent link">&para;</a></h2>
+<h3 id="gefolkiwrapdataimage-u-v"><code>gefolki.wrapData(image, u, v)</code><a class="headerlink" href="#gefolkiwrapdataimage-u-v" title="Permanent link">&para;</a></h3>
+<p>Applies a dense displacement field to an image using nearest-edge handling.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>image</code>
+  Input 2D array to warp.</li>
+<li><code>u</code>
+  Horizontal displacement field.</li>
+<li><code>v</code>
+  Vertical displacement field.</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Warped image as a NumPy array with the same shape as <code>image</code>.</li>
+</ul>
+<h2 id="rank-filters">Rank Filters<a class="headerlink" href="#rank-filters" title="Permanent link">&para;</a></h2>
+<h3 id="gefolkirank_filter_infimage-rad"><code>gefolki.rank_filter_inf(image, rad)</code><a class="headerlink" href="#gefolkirank_filter_infimage-rad" title="Permanent link">&para;</a></h3>
+<p>Computes a local rank image by counting neighbors with lower intensity than each pixel.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>image</code>
+  Input 2D array.</li>
+<li><code>rad</code>
+  Neighborhood radius.</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Rank image as a NumPy array.</li>
+</ul>
+<h3 id="gefolkirank_filter_supimage-rad"><code>gefolki.rank_filter_sup(image, rad)</code><a class="headerlink" href="#gefolkirank_filter_supimage-rad" title="Permanent link">&para;</a></h3>
+<p>Computes a local rank image by counting neighbors with higher intensity than each pixel.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>image</code>
+  Input 2D array.</li>
+<li><code>rad</code>
+  Neighborhood radius.</li>
+</ul>
+<p>Returns:</p>
+<ul>
+<li>Rank image as a NumPy array.</li>
+</ul>
+<h2 id="mining-workflow">Mining Workflow<a class="headerlink" href="#mining-workflow" title="Permanent link">&para;</a></h2>
+<h3 id="gefolkiminingfile_path_referencenone-file_path_secondarynone-rank3-fdecimation8-deprecated_kwargs"><code>gefolki.mining(file_path_reference=None, file_path_secondary=None, rank=3, fdecimation=8, **deprecated_kwargs)</code><a class="headerlink" href="#gefolkiminingfile_path_referencenone-file_path_secondarynone-rank3-fdecimation8-deprecated_kwargs" title="Permanent link">&para;</a></h3>
+<p>Searches for a smaller secondary image inside a larger reference raster using a coarse-to-fine rank-based criterion.</p>
+<p>Parameters:</p>
+<ul>
+<li><code>file_path_reference</code>
+  Path to the reference raster opened with <code>rasterio</code>.</li>
+<li><code>file_path_secondary</code>
+  Path to the secondary image opened with <code>skimage.io.imread</code>.</li>
+<li><code>rank</code>
+  Rank-filter radius.</li>
+<li><code>fdecimation</code>
+  Decimation factor used in the coarse search.</li>
+</ul>
+<p>Backward compatibility:</p>
+<ul>
+<li>The function still accepts legacy keyword arguments <code>file_path_master</code> and <code>file_path_slave</code>.</li>
+</ul>
+<p>Returns:</p>
+<pre><code class="language-python">xmin, xmax, ymin, ymax, reference_final
+</code></pre>
+<p>Where:</p>
+<ul>
+<li><code>xmin</code>, <code>xmax</code>
+  Horizontal bounds of the best match in reference-image coordinates.</li>
+<li><code>ymin</code>, <code>ymax</code>
+  Vertical bounds of the best match in reference-image coordinates.</li>
+<li><code>reference_final</code>
+  Extracted reference subimage matching the secondary-image footprint.</li>
+</ul>
+<p>Side effects:</p>
+<ul>
+<li>Opens interactive plotting windows through Matplotlib.</li>
+<li>Logs progress through <code>loguru</code>.</li>
+</ul>
+<h2 id="demo">Demo<a class="headerlink" href="#demo" title="Permanent link">&para;</a></h2>
+<h3 id="gefolkidemo"><code>gefolki.demo()</code><a class="headerlink" href="#gefolkidemo" title="Permanent link">&para;</a></h3>
+<p>Runs the built-in visual demonstration workflows for LiDAR/radar and optical/radar registration.</p>
+<p>Expected local files:</p>
+<ul>
+<li><code>./datasets/radar_bandep.png</code></li>
+<li><code>./datasets/lidar_georef.png</code></li>
+<li><code>./datasets/optiquehr_georef.png</code></li>
+</ul>
+<p>Side effects:</p>
+<ul>
+<li>Displays Matplotlib figures.</li>
+<li>Logs progress through <code>loguru</code>.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../cli/" class="btn btn-neutral float-right" title="CLI Interface">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Terradue/gefolki" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../cli/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
