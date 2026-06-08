@@ -1,3 +1,4 @@
+import importlib
 import unittest
 from contextlib import ExitStack
 from unittest.mock import patch
@@ -8,6 +9,8 @@ from click.testing import CliRunner
 
 from gefolki.cli import mining_cli
 from gefolki.mining import mining
+
+mining_module = importlib.import_module("gefolki.mining")
 
 
 class _FakeRaster:
@@ -42,24 +45,24 @@ class MiningCliTests(unittest.TestCase):
         stack = ExitStack()
         if open_side_effect is None:
             stack.enter_context(
-                patch(
-                    "gefolki.mining.rasterio.open", return_value=_FakeRaster(reference)
+                patch.object(
+                    mining_module.rasterio, "open", return_value=_FakeRaster(reference)
                 )
             )
         else:
             stack.enter_context(
-                patch("gefolki.mining.rasterio.open", side_effect=open_side_effect)
+                patch.object(mining_module.rasterio, "open", side_effect=open_side_effect)
             )
-        stack.enter_context(patch("gefolki.mining.imread", return_value=secondary))
+        stack.enter_context(patch.object(mining_module, "imread", return_value=secondary))
         stack.enter_context(
-            patch("gefolki.mining.rank_filter_inf", side_effect=lambda arr, _: arr)
+            patch.object(mining_module, "rank_filter_inf", side_effect=lambda arr, _: arr)
         )
-        stack.enter_context(patch("gefolki.mining.resize", side_effect=_fake_resize))
+        stack.enter_context(patch.object(mining_module, "resize", side_effect=_fake_resize))
         stack.enter_context(
-            patch("gefolki.mining._get_plot_module", return_value=plot_stub)
+            patch.object(mining_module, "_get_plot_module", return_value=plot_stub)
         )
-        stack.enter_context(patch("gefolki.mining.logger.info"))
-        stack.enter_context(patch("gefolki.mining.logger.success"))
+        stack.enter_context(patch.object(mining_module.logger, "info"))
+        stack.enter_context(patch.object(mining_module.logger, "success"))
         return stack
 
     def test_requires_input_paths(self):
@@ -184,8 +187,9 @@ class MiningCliTests(unittest.TestCase):
     def test_fails_when_secondary_read_fails(self):
         with self._patched_runtime() as stack:
             stack.enter_context(
-                patch(
-                    "gefolki.mining.imread",
+                patch.object(
+                    mining_module,
+                    "imread",
                     side_effect=FileNotFoundError("missing secondary"),
                 )
             )
