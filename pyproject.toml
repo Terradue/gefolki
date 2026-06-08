@@ -9,6 +9,14 @@ description = "GeFolki is a coregistration software for SAR/SAR and for other ca
 readme = "README.md"
 requires-python = ">=3.10"
 license = "GPL-3.0"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
 authors = [
   { name = "Fabrice Brito", email = "fabrice.brito@terradue.com" },
   { name = "pmembari", email = "parham.membari@terradue.com" },
@@ -53,9 +61,8 @@ include = [
 ]
 
 [tool.hatch.envs.test]
-path = "envs/gefolki_test_env"
 dependencies = [
-  "nose2",
+  "pytest",
   "matplotlib",
   "numpy",
   "pillow",
@@ -65,9 +72,15 @@ dependencies = [
   "scipy",
 ]
 
-[tool.hatch.envs.test.scripts]
-test = "nose2"
 
+[tool.hatch.envs.test.scripts]
+test = "PYTHONPATH=src pytest tests"
+testv = "PYTHONPATH=src pytest -vv tests"
+testlive = "RUN_LIVE_TESTS=1 PYTHONPATH=src pytest -vv tests"
+cov = ["coverage erase", "PYTHONPATH=src coverage run --source=src/gefolki -m pytest tests", "coverage combine", "coverage report"]
+
+[[tool.hatch.envs.test.matrix]]
+python = [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
 
 [tool.hatch.envs.dev]
 description = "Development environment"

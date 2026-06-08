@@ -23,7 +23,7 @@ tasks:
     desc: Run tests
     cmds:
       - mkdir -p .task/hatch
-      - HATCH_DATA_DIR="$PWD/.task/hatch" hatch run test:test 
+      - HATCH_DATA_DIR="$PWD/.task/hatch" hatch run test.py3.12:test
 
   docs:serve:
     desc: "Serve MkDocs site using hatch docs environment"
