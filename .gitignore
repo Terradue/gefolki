@@ -2,3 +2,11 @@
 .ipynb_checkpoints
 *.tif
 /examples/datasets
+*__pycache__*
+build
+dist
+*.egg-info
+.agents
+.vscode
+.task
+envs/*

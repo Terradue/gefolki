@@ -1,0 +1,106 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gefolki"
+dynamic = ["version"]
+description = "GeFolki is a coregistration software for SAR/SAR and for other cases of remote sensing image coregistration (ex LIDAR/SAR, optics/SAR, hyperspectral/optics)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "GPL-3.0"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+authors = [
+  { name = "Fabrice Brito", email = "fabrice.brito@terradue.com" },
+  { name = "pmembari", email = "parham.membari@terradue.com" },
+  { name = "Aurelien Plyer" },
+  { name = "Elise Colin-Koeniguer" },
+  { name = "Flora Weissgerber et al" },
+] 
+dependencies = [
+  "matplotlib",
+  "numpy",
+  "pillow",
+  "rasterio",
+  "scikit-image",
+  "scipy",
+  "click",
+  "imagecodecs",
+  "loguru",
+]
+
+[tool.hatch.version]
+path = "src/gefolki/__about__.py"
+
+
+[project.urls]
+Homepage = "https://github.com/Terradue/gefolki"
+Repository = "https://github.com/Terradue/gefolki"
+
+[project.scripts]
+gefolki-mining = "gefolki.cli:mining_cli"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gefolki"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/README.md",
+  "/LICENSE.txt",
+]
+
+[tool.hatch.envs.test]
+dependencies = [
+  "pytest",
+  "matplotlib",
+  "numpy",
+  "pillow",
+  "rasterio",
+  "scikit-image",
+  "imagecodecs",
+  "scipy",
+]
+
+
+[tool.hatch.envs.test.scripts]
+test = "PYTHONPATH=src pytest tests"
+testv = "PYTHONPATH=src pytest -vv tests"
+testlive = "RUN_LIVE_TESTS=1 PYTHONPATH=src pytest -vv tests"
+cov = ["coverage erase", "PYTHONPATH=src coverage run --source=src/gefolki -m pytest tests", "coverage combine", "coverage report"]
+
+[[tool.hatch.envs.test.matrix]]
+python = [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
+
+[tool.hatch.envs.dev]
+description = "Development environment"
+skip-install = true
+dependencies = [
+  "ruff",
+]
+
+[tool.hatch.envs.dev.scripts]
+lint = "ruff format src tests"
+check = "ruff check --fix src tests"
+
+[tool.hatch.envs.docs]
+description = "Documentation generation environment"
+dependencies = [
+  "mkdocs>=1.6.0",
+  "mkdocs-material>=9.5.0",
+  "mkdocstrings[python]>=0.28.0",
+]
+
+[tool.hatch.envs.docs.scripts]
+serve = "mkdocs serve {args}"
+build = "mkdocs build {args}"

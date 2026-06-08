@@ -13,6 +13,7 @@ Gems - authors, editors, publishers, or webmasters - are to be held
 responsible.  Basically, don't be a jerk, and remember that anything free
 comes with no guarantee.
 """
+
 import numpy as np
 import skimage
 from skimage import color
@@ -25,8 +26,7 @@ MAX_REG_Y = 16  # max. # contextual regions in y-direction */
 NR_OF_GREY = 16384  # number of grayscale levels to use in CLAHE algorithm
 
 
-def equalize_adapthist(image, ntiles_x=8, ntiles_y=8, clip_limit=0.01,
-                       nbins=256):
+def equalize_adapthist(image, ntiles_x=8, ntiles_y=8, clip_limit=0.01, nbins=256):
     """Contrast Limited Adaptive Histogram Equalization.
 
     Parameters
@@ -73,14 +73,14 @@ def equalize_adapthist(image, ntiles_x=8, ntiles_y=8, clip_limit=0.01,
         args[0] = rescale_intensity(l_chan, out_range=(0, NR_OF_GREY - 1))
         new_l = _clahe(*args).astype(float)
         new_l = rescale_intensity(new_l, out_range=(0, 100))
-        lab_img[:new_l.shape[0], :new_l.shape[1], 0] = new_l
+        lab_img[: new_l.shape[0], : new_l.shape[1], 0] = new_l
         image = color.lab2rgb(lab_img)
         image = rescale_intensity(image, out_range=(0, 1))
     else:
         image = skimage.img_as_uint(image)
         args[0] = rescale_intensity(image, out_range=(0, NR_OF_GREY - 1))
         out = _clahe(*args)
-        image[:out.shape[0], :out.shape[1]] = out
+        image[: out.shape[0], : out.shape[1]] = out
         image = rescale_intensity(image)
     return image
 
@@ -124,7 +124,7 @@ def _clahe(image, ntiles_x, ntiles_y, clip_limit, nbins=128):
 
     y_res = image.shape[0] - image.shape[0] % ntiles_y
     x_res = image.shape[1] - image.shape[1] % ntiles_x
-    image = image[: y_res, : x_res]
+    image = image[:y_res, :x_res]
 
     x_size = image.shape[1] // ntiles_x  # Actual size of contextual regions
     y_size = image.shape[0] // ntiles_y
@@ -139,11 +139,11 @@ def _clahe(image, ntiles_x, ntiles_y, clip_limit, nbins=128):
 
     bin_size = 1 + NR_OF_GREY / nbins
     aLUT = np.arange(NR_OF_GREY)
-    #janez
-    toto = 1.0*aLUT
-    toto //=bin_size
+    # janez
+    toto = 1.0 * aLUT
+    toto //= bin_size
     aLUT = toto
-    #aLUT //= bin_size
+    # aLUT //= bin_size
     aLUT = np.round(aLUT)
     aLUT = np.abs(aLUT)
     aLUT = np.intp(aLUT)
@@ -198,8 +198,7 @@ def _clahe(image, ntiles_x, ntiles_y, clip_limit, nbins=128):
 
             xslice = np.arange(xstart, xstart + xstep)
             yslice = np.arange(ystart, ystart + ystep)
-            interpolate(image, xslice, yslice,
-                        mapLU, mapRU, mapLB, mapRB, aLUT)
+            interpolate(image, xslice, yslice, mapLU, mapRU, mapLB, mapRB, aLUT)
 
             xstart += xstep  # set pointer on next matrix */
 
@@ -290,8 +289,7 @@ def map_histogram(hist, min_val, max_val, n_pixels):
     return out.astype(int)
 
 
-def interpolate(image, xslice, yslice,
-                mapLU, mapRU, mapLB, mapRB, aLUT):
+def interpolate(image, xslice, yslice, mapLU, mapRU, mapLB, mapRB, aLUT):
     """Find the new grayscale level for a region using bilinear interpolation.
 
     Parameters
@@ -318,17 +316,16 @@ def interpolate(image, xslice, yslice,
     """
     norm = xslice.size * yslice.size  # Normalization factor
     # interpolation weight matrices
-    x_coef, y_coef = np.meshgrid(np.arange(xslice.size),
-                                 np.arange(yslice.size))
+    x_coef, y_coef = np.meshgrid(np.arange(xslice.size), np.arange(yslice.size))
     x_inv_coef, y_inv_coef = x_coef[:, ::-1] + 1, y_coef[::-1] + 1
 
-    view = image[int(yslice[0]):int(yslice[-1] + 1),
-                 int(xslice[0]):int(xslice[-1] + 1)]
+    view = image[
+        int(yslice[0]) : int(yslice[-1] + 1), int(xslice[0]) : int(xslice[-1] + 1)
+    ]
     im_slice = aLUT[view]
-    new = ((y_inv_coef * (x_inv_coef * mapLU[im_slice]
-                          + x_coef * mapRU[im_slice])
-            + y_coef * (x_inv_coef * mapLB[im_slice]
-                        + x_coef * mapRB[im_slice]))
-           / norm)
+    new = (
+        y_inv_coef * (x_inv_coef * mapLU[im_slice] + x_coef * mapRU[im_slice])
+        + y_coef * (x_inv_coef * mapLB[im_slice] + x_coef * mapRB[im_slice])
+    ) / norm
     view[:, :] = new
     return image
